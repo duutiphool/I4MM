@@ -1,0 +1,68 @@
+---
+title: "HW2"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+```{r}
+#libraries
+library(vegan)
+```
+
+```{r}
+#NOTE THAT I USED R ONLY FOR ISOMAP BECAUSE PYTHON cannot
+#preprocess Data
+
+df<-read.csv(file='HW2.csv')
+dfnew=df[,4:1502]
+norm=scale(dfnew)
+
+```
+```{r}
+#Compute Euclidean Distance Matrix
+D<-dist(norm,method="euclidean")
+```
+```{r}
+#Apply Isomap
+
+L <- isomap(D, k=10,fragmentedOK =TRUE)
+M <- data.matrix(L[[1]])
+gram<-(L[["eig"]])
+sum(gram)
+```
+```{r}
+variance_covered<-0
+a <-replicate(80,0)
+k=0
+for(i in gram) {
+  a[k]<-a[k]+variance_covered
+  variance_covered<-variance_covered+(i/sum(gram))
+  k=k+1
+}
+plot(a,xlim=c(0,10),ylab='cumulative residual variance',xlab='no of included components')
+```
+
+
+```{r}
+```
+
+```
+
+
+```{r}
+df_label=df[,c("Class_Label"),drop=FALSE]
+M<-merge(M,df_label)
+```
+```{r}
+#Plot
+plot()
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
